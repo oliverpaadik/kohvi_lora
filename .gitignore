@@ -3,3 +3,10 @@
 *.pyc
 .DS_Store
 .ssh
+/.idea/.gitignore
+/.idea/LoRa.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
