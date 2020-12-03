@@ -3,6 +3,7 @@
 import configparser
 import time
 import database_connection
+import RPi.GPIO as GPIO
 
 from pySX127x.SX127x.LoRa import *
 from pySX127x.SX127x.board_config import BOARD
@@ -13,6 +14,8 @@ class Receiver(LoRa):
 
     def __init__(self, verbose=False, debug=False):
         BOARD.setup()
+        # sometimes the transreceiver throws strange assertions errors, restart before initialization fixes that
+        self.reset()
         super(Receiver, self).__init__(verbose)
         self.debug = debug
         self.set_mode(MODE.SLEEP)
@@ -103,3 +106,12 @@ class Receiver(LoRa):
     def stop(self):
         self.set_mode(MODE.SLEEP)
         BOARD.teardown()
+
+    def reset(self):
+        print("Resetting board...")
+        GPIO.setup(22, GPIO.OUT)
+        GPIO.output(22, 0)
+        time.sleep(.01)
+        GPIO.output(22, 1)
+        time.sleep(.01)
+        print("Reset done!")

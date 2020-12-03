@@ -4,6 +4,7 @@ import configparser
 import time
 import socket
 import database_connection
+import RPi.GPIO as GPIO
 
 from pySX127x.SX127x.LoRa import *
 from pySX127x.SX127x.board_config import BOARD
@@ -14,6 +15,8 @@ class Transmitter(LoRa):
 
     def __init__(self, verbose=False, debug=False):
         BOARD.setup()
+        # sometimes the transreceiver throws strange assertions errors, restart before initialization fixes that
+        self.reset()
         super(Transmitter, self).__init__(verbose)
         self.debug = debug
         self.set_mode(MODE.SLEEP)
@@ -23,6 +26,7 @@ class Transmitter(LoRa):
 
     def on_rx_done(self):
         print("IRQ_RX")
+        print("RSSI: " + str(self.get_pkt_rssi_value()) + " dBm; SNR: " + str(self.get_pkt_snr_value()) + " dBm")
         self.clear_irq_flags(RxDone=1)
         payload = self.read_payload(nocheck=True)
         message = bytes(payload).decode("utf-8", 'ignore')
@@ -102,3 +106,12 @@ class Transmitter(LoRa):
     def stop(self):
         self.set_mode(MODE.SLEEP)
         BOARD.teardown()
+
+    def reset(self):
+        print("Resetting board...")
+        GPIO.setup(22, GPIO.OUT)
+        GPIO.output(22, 0)
+        time.sleep(.01)
+        GPIO.output(22, 1)
+        time.sleep(.01)
+        print("Reset done!")
