@@ -12,4 +12,19 @@ When transmitting, the program searches the motor_log table for new records (rec
 
 When receiving, the program continuously listens to the channel and when the payload is received, the CRC code is checked to see if the payload received is invalid or not. If not, the message is parsed to a readable form and saved to database. ACK is sent out. If not, nothing is done and module is switched back to continuous receive mode. 
 
+## TABLE STRUCTURE
+<pre>
++-------------+-------------+------+-----+---------+----------------+  
+| Field       | Type        | Null | Key | Default | Extra          |  
++-------------+-------------+------+-----+---------+----------------+  
+| id          | int(11)     | NO   | PRI | NULL    | auto_increment |  
+| motor_name  | varchar(45) | YES  |     | NULL    |                |  
+| start_time  | datetime    | YES  |     | NULL    |                |  
+| machine     | varchar(15) | YES  |     | NULL    |                |  
+| transmit    | datetime    | YES  |     | NULL    |                |  
+| external_id | int(11)     | YES  |     | NULL    |                |  
++-------------+-------------+------+-----+---------+----------------+  
+</pre>
+
 ## work in progress...
+
