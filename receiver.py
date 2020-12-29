@@ -58,9 +58,11 @@ class Receiver(LoRa):
                 self.write_payload([65, 67, 75])  # Send ACK
                 self.set_mode(MODE.TX)
                 time.sleep(2)
-            logging.debug("Switching back to continuous receive mode")
-            self.reset_ptr_rx()
-            self.set_mode(MODE.RXCONT)
+        else:
+            logging.debug("CRC error")
+        logging.debug("Switching back to continuous receive mode")
+        self.reset_ptr_rx()
+        self.set_mode(MODE.RXCONT)
 
     def on_tx_done(self):
         logging.debug("IRQ_TX")
@@ -86,9 +88,13 @@ class Receiver(LoRa):
     def setup(self):
         # use the parameters.ini for configuration
         config = configparser.ConfigParser()
-        config.read('parameters.ini')
+        config.read('/share/parameters.ini')
 
-        self.set_pa_config(pa_select=1, max_power=19, output_power=13)
+        pa_select = int(config['GENERAL']['PA_Boost'])
+        max_power = int(config['GENERAL']['MaxPower'])
+        output_power = int(config['GENERAL']['OutputPower'])
+        self.set_pa_config(pa_select=pa_select, max_power=max_power, output_power=output_power)
+        
         self.set_freq(float(config['GENERAL']['Frequency']))
         self.set_bw(int(config['GENERAL']['Bandwidth']))
         self.set_coding_rate(int(config['GENERAL']['CodingRate']))
